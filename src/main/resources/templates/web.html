@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript">
+        var socket;
+        if("WebSocket" in window){
+            socket = new WebSocket("ws://127.0.0.1:8083/ws");
+            socket.onmessage = function (event) {
+                var ta = document.getElementById('responseText');
+                ta.value += event.data+"\r\n";
+            };
+            socket.onopen = function (ev) {
+                var ta = document.getElementById('responseText');
+                ta.value = "已经连接";
+            };
+            socket.onclose = function (ev) {
+                var ta = document.getElementById('responseText');
+                ta.value = "已经关闭";
+            };
+        }else {
+            alert("您的浏览器不支持webSocket");
+        }
+        function send(message) {
+            if(!window.WebSocket){
+                return;
+            }
+            if (socket.readyState == WebSocket.OPEN){
+                socket.send(message);
+            } else {
+                alert("Websocket连接建立成功");
+            }
+        }
+    </script>
+</head>
+<body>
+<form onsubmit="return false;">
+    <<hr color="black"/>
+    <h3>客户端发送的消息</h3>
+    <label>名字</label><input type="text" name="uid" value="java"/><br/>
+    <label>内容</label><input type="text" name="message" value="hello,woshi..."/><br/>
+    <br/><input type="button" value="发送" onclick="send(this.form.uid.value+':'+this.form.message.value)"/>
+    <hr color="black"/>
+    <h3>服务器返回的消息</h3>
+    <textarea id = "responseText" style="width: 900px;height: 300px;"></textarea>
+</form>
+</body>
+</html>
